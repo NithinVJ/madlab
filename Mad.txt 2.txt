@@ -1,0 +1,2101 @@
+EXP-2
+import 'package:flutter/material.dart';
+
+void main() {
+runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Text Style Change',
+home: TextStyleChangeScreen(),
+);
+}
+}
+
+class TextStyleChangeScreen extends StatefulWidget {
+@override
+_TextStyleChangeScreenState createState() => _TextStyleChangeScreenState();
+}
+
+class _TextStyleChangeScreenState extends State<TextStyleChangeScreen> {
+bool _isChanged = false;
+
+void _changeTextStyle() {
+setState(() {
+_isChanged = !_isChanged;
+});
+}
+
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Text Style Change'),
+),
+body: Center(
+child: Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: <Widget>[
+Text(
+'Welcome',
+style: TextStyle(
+fontSize: _isChanged ? 32 : 24, // Change the font size
+color: _isChanged ? Colors.red : Colors.blue, // Change the color
+),
+),
+SizedBox(height: 20),
+ElevatedButton(
+onPressed: _changeTextStyle,
+child: Text('Change Text Style'),
+),
+],
+),
+),
+);
+}
+}
+
+EXP-3
+import 'package:flutter/material.dart';
+
+void main() {
+runApp(CalculatorApp());
+}
+
+class CalculatorApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Simple Calculator',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+),
+home: CalculatorHomePage(),
+);
+}
+}
+
+class CalculatorHomePage extends StatefulWidget {
+@override
+_CalculatorHomePageState createState() => _CalculatorHomePageState();
+}
+
+class _CalculatorHomePageState extends State<CalculatorHomePage> {
+String _output = "0";
+String _currentValue = "0";
+String _operator = "";
+
+double _num1 = 0.0;
+double _num2 = 0.0;
+
+void _buttonPressed(String buttonText) {
+if (buttonText == "C") {
+_output = "0";
+_currentValue = "0";
+_operator = "";
+_num1 = 0.0;
+_num2 = 0.0;
+} else if (buttonText == "+" || buttonText == "-" || buttonText == "/" || buttonText == "*") {
+_num1 = double.parse(_output);
+_operator = buttonText;
+_currentValue = "0";
+} else if (buttonText == ".") {
+if (!_currentValue.contains(".")) {
+_currentValue += buttonText;
+}
+} else if (buttonText == "=") {
+_num2 = double.parse(_output);
+
+switch (_operator) {
+case "+":
+_output = (_num1 + _num2).toString();
+break;
+case "-":
+_output = (_num1 - _num2).toString();
+break;
+case "*":
+
+_output = (_num1 * _num2).toString();
+break;
+case "/":
+_output = (_num1 / _num2).toString();
+break;
+}
+
+_num1 = 0.0;
+_num2 = 0.0;
+_operator = "";
+_currentValue = _output;
+} else {
+_currentValue += buttonText;
+_output = _currentValue;
+}
+
+setState(() {
+_output = double.parse(_output).toString();
+});
+}
+
+Widget _buildButton(String buttonText) {
+return Expanded(
+child: OutlinedButton(
+onPressed: () => _buttonPressed(buttonText),
+child: Padding(
+padding: const EdgeInsets.all(24.0),
+child: Text(
+buttonText,
+
+style: TextStyle(
+fontSize: 20.0,
+fontWeight: FontWeight.bold,
+),
+),
+),
+),
+);
+}
+
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Simple Calculator'),
+),
+body: Column(
+children: <Widget>[
+Container(
+alignment: Alignment.centerRight,
+padding: EdgeInsets.symmetric(
+vertical: 24.0,
+horizontal: 12.0,
+),
+child: Text(
+_output,
+style: TextStyle(
+fontSize: 48.0,
+fontWeight: FontWeight.bold,
+
+),
+),
+),
+Expanded(
+child: Divider(),
+),
+Column(
+children: [
+Row(
+children: [
+_buildButton("7"),
+_buildButton("8"),
+_buildButton("9"),
+_buildButton("/"),
+],
+),
+Row(
+children: [
+_buildButton("4"),
+_buildButton("5"),
+_buildButton("6"),
+_buildButton("*"),
+],
+),
+Row(
+children: [
+_buildButton("1"),
+_buildButton("2"),
+_buildButton("3"),
+
+_buildButton("-"),
+],
+),
+Row(
+children: [
+_buildButton("."),
+_buildButton("0"),
+_buildButton("00"),
+_buildButton("+"),
+],
+),
+Row(
+children: [
+_buildButton("C"),
+_buildButton("="),
+],
+),
+],
+),
+],
+),
+);
+}
+}
+
+EXP-4
+import 'package:flutter/material.dart';
+import 'dart:math';
+import 'dart:async';
+
+void main() {
+runApp(CatchTheBallGame());
+}
+
+class CatchTheBallGame extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Catch The Ball Game',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+),
+home: GamePage(),
+);
+}
+}
+
+class GamePage extends StatefulWidget {
+@override
+_GamePageState createState() => _GamePageState();
+}
+
+class _GamePageState extends State<GamePage> {
+late Timer _gameTimer;
+
+double _ballX = 100.0;
+double _ballY = 100.0;
+int _score = 0;
+int _timeLeft = 30;
+bool _isGameOver = false;
+
+@override
+void initState() {
+super.initState();
+_gameTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+if (_timeLeft > 0) {
+setState(() {
+_timeLeft--;
+});
+} else {
+setState(() {
+_isGameOver = true;
+});
+_gameTimer.cancel();
+}
+});
+}
+
+void _moveBall() {
+if (!_isGameOver) {
+setState(() {
+_score++;
+_ballX = Random().nextDouble() * (MediaQuery.of(context).size.width - 50);
+_ballY = Random().nextDouble() * (MediaQuery.of(context).size.height - 50);
+
+});
+}
+}
+
+@override
+void dispose() {
+_gameTimer.cancel();
+super.dispose();
+}
+
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Catch The Ball Game'),
+),
+body: GestureDetector(
+onTap: _moveBall,
+child: Stack(
+children: [
+if (_isGameOver)
+Center(
+child: Text(
+'Game Over\nScore: $_score\nTime Left: $_timeLeft',
+textAlign: TextAlign.center,
+style: TextStyle(fontSize: 24),
+),
+)
+else ...[
+
+Positioned(
+left: _ballX,
+top: _ballY,
+child: GestureDetector(
+onTap: _moveBall,
+child: Image.asset(
+'assets/object.png',
+width: 50,
+height: 50,
+),
+),
+),
+Positioned(
+top: 10,
+right: 10,
+child: Text(
+'Score: $_score',
+style: TextStyle(fontSize: 24),
+),
+),
+Positioned(
+top: 10,
+left: 10,
+child: Text(
+'Time Left: $_timeLeft',
+style: TextStyle(fontSize: 24),
+),
+),
+],
+
+],
+),
+),
+floatingActionButton: _isGameOver
+? null
+: FloatingActionButton(
+onPressed: () {
+setState(() {
+_score = 0;
+_timeLeft = 30;
+_isGameOver = false;
+_ballX = Random().nextDouble() * (MediaQuery.of(context).size.width - 50);
+_ballY = Random().nextDouble() * (MediaQuery.of(context).size.height - 50);
+});
+_gameTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+if (_timeLeft > 0) {
+setState(() {
+_timeLeft--;
+});
+} else {
+setState(() {
+_isGameOver = true;
+});
+_gameTimer.cancel();
+}
+});
+},
+child: Icon(Icons.refresh),
+),
+
+);
+}
+}
+
+Ex 5
+import 'package:flutter/material.dart';
+
+void main() {
+runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+home: MovieRatingApp(),
+);
+}
+}
+
+class MovieRatingApp extends StatefulWidget {
+@override
+_MovieRatingAppState createState() => _MovieRatingAppState();
+}
+
+class _MovieRatingAppState extends State<MovieRatingApp> {
+String movieTitle = '';
+double rating = 0.0;
+
+final List<Movie> movies = [
+Movie('Movie 1', 4.5),
+Movie('Movie 2', 3.8),
+Movie('Movie 3', 4.9),
+];
+
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Movie Rating App'),
+),
+body: Padding(
+padding: const EdgeInsets.all(16.0),
+child: Column(
+children: [
+TextField(
+decoration: InputDecoration(
+labelText: 'Movie Title',
+),
+onChanged: (value) {
+setState(() {
+movieTitle = value;
+});
+},
+
+),
+Slider(
+value: rating,
+min: 0.0,
+max: 5.0,
+divisions: 10,
+label: rating.round().toString(),
+onChanged: (value) {
+setState(() {
+rating = value;
+});
+},
+),
+ElevatedButton(
+onPressed: () {
+setState(() {
+movies.add(Movie(movieTitle, rating));
+movieTitle = '';
+rating = 0.0;
+});
+},
+child: Text('Add Movie'),
+),
+Expanded(
+child: ListView.builder(
+
+itemCount: movies.length,
+itemBuilder: (context, index) {
+return ListTile(
+title: Text(movies[index].title),
+trailing: Text('${movies[index].rating}/5'),
+);
+},
+),
+),
+],
+),
+),
+);
+}
+}
+
+class Movie {
+String title;
+double rating;
+
+Movie(this.title, this.rating);
+}
+```
+
+Output
+
+Ex No:1
+Study and Install Flutter Multi-Platform Environment
+
+Date:
+Aim:
+
+To study and install Flutter multi-platform environment.
+
+Flutter:
+Flutter is an open-source UI software development kit created by Google for building
+natively compiled applications for mobile, web, and desktop from a single codebase. It utilizes
+the Dart programming language, offering a rich set of pre-designed widgets for crafting visually
+appealing and responsive user interfaces. With Flutter's hot reload feature, developers can
+quickly see changes in real-time, enhancing productivity. Its layered architecture enables smooth
+performance across platforms, with high customization options for branding and design. Flutter's
+popularity stems from its efficiency in creating cross-platform applications with a native-like
+experience, making it a preferred choice for developers aiming for consistency and speed in app
+development.
+
+System Requirements:
+
+
+Operating System: Windows 7 or later
+
+
+
+Disk Space: 2.8 GB
+
+
+
+RAM: 8 GB
+
+Installing Flutter in Visual Studio Code:
+Step 1: Download the Flutter SDK from the official website of Flutter.
+
+Fig 1.1: Download Flutter
+
+Step 2: Set Environment variable path.
+Step 2.1: After downloading Flutter SDK, extract the file and copy the path of the bin folder.
+
+Fig1.2: Copy path
+
+Step 2.2: Create new and paste the path that was copied earlier and save.
+
+Fig 1.3: Edit Environmental Variable
+
+Step 3: Installing Flutter in Visual Studio Code
+
+Fig 1.4: Install Flutter
+
+Step 4: Now install Dart in Visual Studio Code
+
+Fig 1.5: Install Dart
+Step 5: Check if flutter is installed or not by typing “flutter –version” in Visual Studio Code
+using terminal, if everything is fine then it will show the version of the installed flutter.
+
+Fig 1.6: Check Flutter installation
+
+Step to create new project in flutter:
+Step 1: Open command palette in VS code
+
+Fig 1.7: Open command palette
+
+Step 2: Choose ‘Flutter: NewProject’ and application type.
+
+Fig 1.8: Project Type
+
+Fig 1.9: Application Type
+
+Step 3: Select a folder to create flutter project.
+
+Fig 1.10: Select Folder
+
+Step 4: Enter a name for the project.
+
+Fig 1.11: Project Name
+
+Step 5: VS code create the project and set up necessary files.
+
+Fig 1.12: Project created successfully
+
+Step 6: Run the application in terminal by typing ‘flutter run’.
+
+Fig 1.13: Running Application
+
+Step 7: Now we are ready to see the output, by default it has a program in which there is a
+button by clicking on that a counter will be displayed in the center.
+
+Fig 1.14: Output
+
+Result:
+Thus the Flutter multi-platform environment was studied and installed successfully.
+
+Ex No:2
+Date:
+
+Develop an application that uses Widgets, GUI Components,
+Fonts and Colors
+
+Aim:
+To develop an application that uses widgets, GUI components, fonts and colors.
+
+Algorithm:
+Step 1: Define the MyApp class:
+This class extends StatelessWidget and override the build method to return a MaterialApp
+widget.
+Step 2: Define the MyHomePage class:
+This class extends StatefulWidget and override the createState method to return an instance
+of _MyHomePageState.
+Step 3: Define the _MyHomePageState class:
+Step 3.1: A class extends State<MyHomePage> with font size, counter, and text color
+variables.
+Step 3.2: The build method returns a Scaffold with AppBar and Center widgets.
+Step 3.3: Inside Center, a Column contains a Padding with a styled 'WELCOME' Text
+Step 3.4: Implement two ElevatedButton one to change the font size when pressed and the
+another to cycle through different text colors when pressed.
+Step 3.5: Implement setState update state variables (font size and text color).
+
+Execution Procedure:
+Step 1: Open VS code and Create a new Flutter project.
+Step 2: Replace the default ‘main.dart’ file with your code.
+Step 3: Ensure dependencies are listed in the `pubspec.yaml` file.
+Step 4: Run the Flutter application in terminal and choose the device
+“flutter run”
+Step 5: Interact with the app on the device by tapping on the buttons to change the font size and
+color of the text.
+
+Program:
+main.dart:
+import 'package:flutter/material.dart';
+void main() {
+runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Flutter App',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+),
+home: MyHomePage(),
+);
+}
+}
+class MyHomePage extends StatefulWidget {
+@override
+_MyHomePageState createState() => _MyHomePageState();
+}
+class _MyHomePageState extends State<MyHomePage> {
+double font = 20;
+int i = 1;
+Color t1Color = Colors.blue;
+@override
+
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Flutter App'),
+),
+body: Center(
+child: Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+Padding(
+padding: EdgeInsets.all(20),
+child: Text(
+'WELCOME',
+style: TextStyle(
+fontSize: font,
+fontWeight: FontWeight.bold,
+color: t1Color,
+),
+textAlign: TextAlign.center,
+),
+),
+ElevatedButton(
+onPressed: () {
+setState(() {
+font += 4;
+if (font == 44) font = 20;
+});
+
+},
+child: Text('Change Font Size'),
+),
+ElevatedButton(
+onPressed: () {
+setState(() {
+switch (i) {
+case 1:
+t1Color = Colors.blue;
+break;
+case 2:
+t1Color = Colors.green;
+break;
+case 3:
+t1Color = Colors.red;
+break;
+case 4:
+t1Color = Colors.brown;
+break;
+}
+i++;
+if (i == 5) i = 1;
+});
+},
+child: Text('Change Color'),
+),
+],
+
+),
+),
+);
+}
+}
+
+Output:
+
+Result:
+Thus the application uses widgets, GUI components, fonts and colors was developed
+successfully.
+
+Ex No:3
+Date:
+
+Develop a Native Calculator Application
+
+Aim:
+To develop a native calculator application.
+
+Algorithm:
+Step 1: Overall Layout:
+Ste 1.1: The app's root widget is a MaterialApp with a title and a blue theme.
+Step 1.2: The home screen is a centered container with a fixed width of 400 pixels. This
+container holds the CalculatorScreen.
+Step 2: CalculatorScreen:
+Step 2.1: The screen displays a text field for the calculator's display value and a grid of
+buttons for digits, operators, and actions.
+Step 2.2: The _displayValue variable holds the current value displayed on the calculator.
+Step 2.3: The _onButtonPressed function handles button presses and updates the display
+value accordingly.
+Step 2.4: The _calculateResult function evaluates the arithmetic expression entered and
+returns the result.
+Step 2.5: The layout consists of a column with a text field for the display value and rows
+of buttons for digits, operators, and actions.
+Step 3: CalculatorButton:
+Step 3.1: A custom CalculatorButton widget is defined for calculator buttons.
+Step 3.2: It takes text and an onPressed callback as parameters and returns an
+ElevatedButton.
+Step 3.3: The button style is customized with a background color, text color, border radius,
+and border color.
+Step 4: Styling:
+Step 4.1: The app's app bar title is centered with increased font size.
+Step 4.2: The display value text field has a fixed width and increased font size.
+Step 4.3: Buttons are styled with a custom background color, text color, and border.
+
+Execution Procedure:
+Step 1: Open VS code and Create a new Flutter project.
+Step 2: Replace the default ‘main.dart’ file with your code.
+Step 3: Ensure dependencies are listed in the `pubspec.yaml` file.
+Step 4: Run the Flutter application in terminal and choose the device
+“flutter run”
+Step 5: Interact with the app on the device by tapping on the buttons to calculate.
+
+Program:
+
+import 'package:flutter/material.dart';
+void main() {
+runApp(CalculatorApp());
+}
+class CalculatorApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Calculator',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+),
+home: Center(
+child: Container(
+width: 400.0, // Set the width to 400px
+decoration: BoxDecoration(
+border: Border.all(color: Colors.black, width: 3.0), // Set border width to 3px
+borderRadius: BorderRadius.circular(10.0), // Rounded corners for the border
+),
+child: CalculatorScreen(),
+),
+),
+);
+}
+}
+
+class CalculatorScreen extends StatefulWidget {
+@override
+_CalculatorScreenState createState() => _CalculatorScreenState();
+}
+class _CalculatorScreenState extends State<CalculatorScreen> {
+String _displayValue = '';
+void _onButtonPressed(String text) {
+setState(() {
+if (text == '=') {
+_displayValue = _calculateResult();
+} else if (text == 'C') {
+_displayValue = '';
+} else if (text == '⌫') {
+_displayValue = _displayValue.substring(0, _displayValue.length - 1);
+} else {
+_displayValue += text;
+}
+});
+}
+String _calculateResult() {
+final numbers = _displayValue.split(RegExp(r'[-+*/]'));
+final operator = _displayValue.replaceAll(RegExp(r'[0-9.]'), '');
+if (numbers.length != 2 || operator.isEmpty) {
+return 'Error';
+}
+final num1 = double.tryParse(numbers[0]);
+final num2 = double.tryParse(numbers[1]);
+
+if (num1 == null || num2 == null) {
+return 'Error';
+}
+double result;
+switch (operator) {
+case '+':
+result = num1 + num2;
+break;
+case '-':
+result = num1 - num2;
+break;
+case '*':
+result = num1 * num2;
+break;
+case '/':
+if (num2 == 0) {
+return 'Error';
+}
+result = num1 / num2;
+break;
+default:
+return 'Error';
+}
+return result.toString();
+}
+@override
+Widget build(BuildContext context) {
+
+return Scaffold(
+appBar: AppBar(
+title: Center(child: Text('Calculator', style: TextStyle(fontSize: 30))), // Increase font size to
+30px
+),
+body: Center(
+child: Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+Container(
+width: 400,
+height: 100,
+alignment: Alignment.center,
+padding: EdgeInsets.symmetric(horizontal: 20.0),
+child: Text(
+_displayValue,
+style: TextStyle(fontSize: 30.0), ),
+),
+SizedBox(height: 20.0),
+Column(
+mainAxisAlignment: MainAxisAlignment.start,
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+Row(
+mainAxisAlignment: MainAxisAlignment.start,
+children: [
+Expanded(
+
+child:CalculatorButton(
+text: 'C',
+onPressed: () => _onButtonPressed('C'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '⌫',
+onPressed: () => _onButtonPressed('⌫'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '/',
+onPressed: () => _onButtonPressed('/'),
+),
+),
+],
+),
+Row(
+mainAxisAlignment: MainAxisAlignment.start,
+children: [
+Expanded(
+child:CalculatorButton(
+text: '7',
+onPressed: () => _onButtonPressed('7'),
+
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '8',
+onPressed: () => _onButtonPressed('8'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '9',
+onPressed: () => _onButtonPressed('9'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '*',
+onPressed: () => _onButtonPressed('*'),
+),
+),
+],
+),
+Row(
+mainAxisAlignment: MainAxisAlignment.start,
+children: [
+Expanded(
+child:CalculatorButton(
+
+text: '4',
+onPressed: () => _onButtonPressed('4'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '5',
+onPressed: () => _onButtonPressed('5'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '6',
+onPressed: () => _onButtonPressed('6'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '-',
+onPressed: () => _onButtonPressed('-'),
+),
+),
+],
+),
+Row(
+mainAxisAlignment: MainAxisAlignment.start,
+children: [
+
+Expanded(
+child:CalculatorButton(
+text: '1',
+onPressed: () => _onButtonPressed('1'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '2',
+onPressed: () => _onButtonPressed('2'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '3',
+onPressed: () => _onButtonPressed('3'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '+',
+onPressed: () => _onButtonPressed('+'),
+),
+),
+],
+),
+Row(
+
+mainAxisAlignment: MainAxisAlignment.start,
+children: [
+Expanded(
+child: CalculatorButton(
+text: '0',
+onPressed: () => _onButtonPressed('0'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '.',
+onPressed: () => _onButtonPressed('.'),
+),
+),
+Expanded(
+child:CalculatorButton(
+text: '=',
+onPressed: () => _onButtonPressed('='),
+),
+),
+],
+),
+],
+),
+],
+),
+),
+
+);
+}
+}
+class CalculatorButton extends StatelessWidget {
+final String text;
+final VoidCallback onPressed;
+const CalculatorButton({
+required this.text,
+required this.onPressed,
+});
+@override
+Widget build(BuildContext context) {
+return Padding(
+padding: EdgeInsets.all(8.0),
+child: ElevatedButton(
+onPressed: onPressed,
+style: ElevatedButton.styleFrom(
+backgroundColor: const Color.fromARGB(255, 254, 167, 167),
+foregroundColor: const Color.fromARGB(255, 0, 0, 0),
+shape: RoundedRectangleBorder(
+borderRadius: BorderRadius.circular(4.0),
+side: BorderSide(color: Colors.black),
+),
+),
+child: Text(
+text,
+style: TextStyle(fontSize: 20.0),
+
+),
+),
+);
+}
+}
+
+Output:
+
+Result:
+Thus the native calculator application was developed successfully.
+
+Ex No:4
+Date:
+
+Develop a gaming application that uses 2-D animations and
+gestures
+
+Aim:
+To develop a gaming application that uses 2-D animations and gestures.
+
+Algorithm:
+Step 1: Define the MyApp class:
+This class extends StatelessWidget and override the build method to return a MaterialApp
+widget.
+Step 2: Define the GameScreen class:
+Step 2.1: This class extends StatelessWidget and override the build method to return a
+Scaffold widget.
+Step 2.2: The body contains an ElevatedButton to start the game, which navigates to the
+GameplayScreen.
+Step 3: Define the GameplayScreen class:
+Step 3.1: This class extends StatefulWidget and includes SingleTickerProviderStateMixin
+and override the createState method to return an instance of _GameplayScreenState.
+Step 3.2: A StatefulWidget extends _GameplayScreenState, managing game logic, UI
+setup with AppBar, GestureDetector, player, destination widgets, timer, game status, and game
+over display.
+Step 4: Define the Destination class:
+This class holds information about each destination, including its offset (position) and
+color.
+Player widget: A red container representing the player's position, with animation applied
+to its movement.
+Destination widgets: Colored circles representing the targets the player needs to reach.
+Game over UI: Displayed when the game is over, showing the final score and a button to
+restart the game.
+Start game button: Displayed when the game is not started yet, allowing the player to
+start the game.
+
+Execution Procedure:
+Step 1: Open VS code and Create a new Flutter project.
+Step 2: Replace the default ‘main.dart’ file with your code.
+Step 3: Ensure dependencies are listed in the `pubspec.yaml` file.
+Step 4: Run the Flutter application in terminal and choose the device
+“flutter run”
+Step 5: Interact with the game:
+Step 5.1: Once the application is built and deployed, you should see the "Start Game"
+button.
+Step 5.2: Tap on the "Start Game" button to begin playing.
+Step 5.3: Drag the red square to move it around the screen.
+Step 5.4: The goal is to move the red square to each colored circle (destination) to score
+points.
+Step 5.5: The game ends when either the time runs out or the maximum score is reached.
+Step 5.6: If the game ends, you can restart it by tapping the "Restart Game" button.
+
+Program:
+import 'package:flutter/material.dart';
+import 'dart:async';
+void main() {
+runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Flutter Game Example',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+fontFamily: 'Roboto',
+),
+home: GameScreen(),
+);
+}
+}
+class GameScreen extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Game Screen'),
+),
+
+body: Center(
+child: ElevatedButton(
+onPressed: () {
+Navigator.push(
+context,
+MaterialPageRoute(builder: (context) => GameplayScreen()),
+);
+},
+child: Text(
+'Start Game',
+style: TextStyle(
+fontSize: 20,
+fontWeight: FontWeight.bold,
+color: Colors.blue,
+),
+),
+),
+),
+);
+}
+}
+class GameplayScreen extends StatefulWidget {
+@override
+_GameplayScreenState createState() => _GameplayScreenState();
+}
+class _GameplayScreenState extends State<GameplayScreen>
+with SingleTickerProviderStateMixin {
+
+late AnimationController _controller;
+late Animation<Offset> _animation;
+Offset _position = Offset(0, 0);
+int _score = 0;
+List<Destination> _destinations = [
+Destination(Offset(100, 100), Colors.green),
+Destination(Offset(200, 200), Colors.blue),
+Destination(Offset(300, 300), Colors.orange),
+Destination(Offset(400, 400), Colors.purple),
+];
+int _currentDestinationIndex = 0;
+bool _gameOver = false;
+bool _gameStarted = false;
+int _timeLeft = 60;
+int _maxScore = 100; // Maximum score to attain
+@override
+void initState() {
+super.initState();
+_controller = AnimationController(
+vsync: this,
+duration: Duration(seconds: 1),
+);
+_animation = Tween<Offset>(
+begin: Offset.zero,
+end: Offset(0, 0),
+).animate(_controller);
+}
+
+@override
+void dispose() {
+_controller.dispose();
+super.dispose();
+}
+void _startGame() {
+setState(() {
+_gameStarted = true;
+});
+_controller.forward();
+_startTimer();
+}
+void _startTimer() {
+const oneSec = const Duration(seconds: 1);
+Timer.periodic(
+oneSec,
+(Timer timer) {
+setState(() {
+if (_timeLeft < 1 || _score >= _maxScore) {
+timer.cancel();
+_gameOver = true;
+} else {
+_timeLeft -= 1;
+}
+});
+if (_gameOver) {
+timer.cancel();
+
+}
+},
+);
+}
+void _onPanUpdate(DragUpdateDetails details) {
+if (!_gameOver) {
+setState(() {
+_position += details.delta;
+_checkReachedDestination();
+});
+}
+}
+void _onPanEnd(DragEndDetails details) {
+_controller.reset();
+_controller.forward();
+}
+void _checkReachedDestination() {
+if ((_position - _destinations[_currentDestinationIndex].offset)
+.distanceSquared <
+100) {
+setState(() {
+_score += 10;
+if (_currentDestinationIndex < _destinations.length - 1) {
+_currentDestinationIndex++;
+} else {
+_gameOver = true;
+}
+
+});
+}
+}
+void _restartGame() {
+setState(() {
+_position = Offset(0, 0);
+_score = 0;
+_currentDestinationIndex = 0;
+_gameOver = false;
+_gameStarted = false;
+_timeLeft = 60;
+});
+}
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Gameplay Screen'),
+),
+body: GestureDetector(
+onPanUpdate: _onPanUpdate,
+onPanEnd: _onPanEnd,
+child: Stack(
+children: [
+if (!_gameOver)
+Positioned(
+left: _position.dx,
+
+top: _position.dy,
+child: SlideTransition(
+position: _animation,
+child: Container(
+width: 50,
+height: 50,
+decoration: BoxDecoration(
+color: Colors.red,
+borderRadius: BorderRadius.circular(25),
+boxShadow: [
+BoxShadow(
+color: Colors.black.withOpacity(0.2),
+spreadRadius: 3,
+blurRadius: 5,
+offset: Offset(0, 3),
+),
+],
+),
+),
+),
+),
+for (var destination in _destinations)
+Positioned(
+left: destination.offset.dx - 10,
+top: destination.offset.dy - 10,
+child: Container(
+width: 20,
+
+height: 20,
+decoration: BoxDecoration(
+color: destination.color,
+shape: BoxShape.circle,
+boxShadow: [
+BoxShadow(
+color: Colors.black.withOpacity(0.2),
+spreadRadius: 3,
+blurRadius: 5,
+offset: Offset(0, 3),
+),
+],
+),
+),
+),
+if (_gameOver)
+Column(
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+Text(
+'Game Over!',
+style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+),
+Text(
+'Score: $_score',
+style: TextStyle(fontSize: 20),
+),
+
+SizedBox(height: 20),
+ElevatedButton(
+onPressed: _restartGame,
+child: Text('Restart Game'),
+),
+],
+),
+if (!_gameStarted)
+Center(
+child: ElevatedButton(
+onPressed: _startGame,
+child: Text('Start Game'),
+),
+),
+Positioned(
+top: 10,
+right: 10,
+child: Text(
+'Time Left: $_timeLeft',
+style: TextStyle(fontSize: 20),
+),
+),
+],
+),
+),
+);
+}
+
+}
+class Destination {
+final Offset offset;
+final Color color;
+Destination(this.offset, this.color);
+}
+
+Output
+
+Result:
+Thus the gaming application uses 2-D animation and gestures was developed successfully.
+
+Ex No:5
+Date:
+
+Develop a Movie Rating Application
+
+Aim:
+To develop a movie rating application.
+
+Algorithm:
+Step 1: MovieRatingApp:
+Step 1.1: The root widget of the app is a MaterialApp with a title and a blue theme.
+Step 1.2: The home screen is set to WelcomeScreen.
+Step 2: WelcomeScreen:
+Step 2.1: Displays a welcome message along with an image and a button to rate movies.
+Step 2.2: When the button is pressed, it navigates to MovieListScreen.
+Step 3: MovieListScreen:
+Step 3.1: Displays a list of movies from the movies list.
+Step 3.2: Each movie title is displayed as a ListTile.
+Step 3.3: When a movie is tapped, it navigates to MovieDetailsScreen and passes the
+selected movie object.
+Step 4: MovieDetailsScreen:
+Step 4.1: Displays detailed information about a movie including its image, rating, director,
+and description.
+Step 4.2: Allows users to rate the movie using a slider.
+Step 4.3: When the "Submit" button is pressed, it calculates the new rating by averaging
+the user's rating with the existing rating, updates the movie's rating, and then navigates back to
+the previous screen.
+Step 5: Movie Class:
+Represents a movie with properties like title, director, rating, description, and imagePath.
+Step 6: Movies List:
+Contains a list of predefined movie objects.
+
+Execution Procedure:
+Step 1: Open VS code and Create a new Flutter project.
+Step 2: Replace the default ‘main.dart’ file with your code.
+Step 3: Add the required movie images to the assets folder.
+Step 4: Update the ‘pubspec.yaml’ file to include the paths to the movie images
+Step 5: Run the Flutter application in terminal and choose the device
+“flutter run”
+Step 6: Interact with the movie rating app:
+Step 6.1: Once the application is built and deployed, you should see the "Welcome" screen
+with the option to "Rate The Movies".
+Step 6.2: Tap on the "Rate The Movies" button to view the list of movies.
+Step 6.3: Tap on a movie to view its details and rate it.
+Step 6.4: Use the slider to select your rating for the movie.
+Step 6.5: Tap on "Submit" to submit your rating and go back to the movie list screen.
+
+Program:
+
+import 'package:flutter/material.dart';
+void main() {
+runApp(MovieRatingApp());
+}
+class MovieRatingApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Movie Rating App',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+),
+home: WelcomeScreen(),
+);
+}
+}
+class WelcomeScreen extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Welcome'),
+),
+body: Center(
+child: Column(
+
+mainAxisAlignment: MainAxisAlignment.center,
+children: [
+Image.asset(
+'assets/Movie_icon.jpg', // Assuming the image is stored in the assets folder
+width: 200,
+height: 200,
+),
+SizedBox(height: 20),
+Text(
+'WELCOME TO MOVIE RATING APP',
+style: TextStyle(fontWeight: FontWeight.bold),
+),
+SizedBox(height: 20),
+ElevatedButton(
+onPressed: () {
+Navigator.push(
+context,
+MaterialPageRoute(
+builder: (context) => MovieListScreen(),
+),
+);
+},
+child: Text('Rate The Movies'),
+),
+],
+),
+),
+
+);
+}
+}
+class MovieListScreen extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Movies'),
+),
+body: ListView.builder(
+itemCount: movies.length,
+itemBuilder: (context, index) {
+return ListTile(
+title: Text(movies[index].title),
+onTap: () {
+Navigator.push(
+context,
+MaterialPageRoute(
+builder: (context) => MovieDetailsScreen(movie: movies[index]),
+),
+);
+},
+);
+},
+),
+);
+
+}
+}
+class MovieDetailsScreen extends StatefulWidget {
+final Movie movie;
+MovieDetailsScreen({required this.movie});
+@override
+_MovieDetailsScreenState createState() => _MovieDetailsScreenState();
+}
+class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
+double userRating = 0.0;
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text(widget.movie.title),
+),
+body: Padding(
+padding: EdgeInsets.all(16.0),
+child: Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: [
+// Displaying the movie image
+Image.asset(
+widget.movie.imagePath,
+width: 200,
+height: 200,
+fit: BoxFit.cover,
+
+),
+SizedBox(height: 20),
+Text('Rating:', style: TextStyle(fontWeight: FontWeight.bold)),
+Text(widget.movie.rating.toStringAsFixed(1)),
+Text('Director:', style: TextStyle(fontWeight: FontWeight.bold)),
+Text(widget.movie.director),
+Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+Text(widget.movie.description),
+SizedBox(height: 20),
+Text('Current Rating: ${widget.movie.rating.toStringAsFixed(1)}'),
+SizedBox(height: 20),
+Text('Rate this movie:'),
+Slider(
+value: userRating,
+onChanged: (newRating) {
+setState(() {
+userRating = newRating;
+});
+},
+min: 0,
+max: 10,
+divisions: 100,
+label: userRating.toStringAsFixed(1),
+),
+SizedBox(height: 20),
+ElevatedButton(
+onPressed: () {
+
+double newRating = (widget.movie.rating + userRating) / 2;
+setState(() {
+widget.movie.rating = newRating;
+});
+// Save user rating to the database or any other storage
+// Here we're just printing it to the console
+print('User rated ${widget.movie.title} as $userRating');
+Navigator.pop(context);
+},
+child: Text('Submit'),
+),
+],
+),
+),
+);
+}
+}
+class Movie {
+String title;
+String director;
+double rating;
+String description;
+String imagePath;
+Movie({
+required this.title,
+required this.director,
+required this.rating,
+
+required this.description,
+required this.imagePath,
+});
+}
+List<Movie> movies = [
+Movie(
+title: 'Inception',
+director: 'Christopher Nolan',
+rating: 8.8,
+description:
+'A thief who enters the dreams of others to steal secrets from their subconscious.',
+imagePath: 'assets/inception.jpg',
+),
+Movie(
+title: 'The Shawshank Redemption',
+director: 'Frank Darabont',
+rating: 9.3,
+description:
+'Two imprisoned men bond over a number of years, finding solace and eventual redemption
+through acts of common decency.',
+imagePath: 'assets/TheShawshankRedemption.jpg',
+),
+Movie(
+title: 'The Dark Knight',
+director: 'Christopher Nolan',
+rating: 9.0,
+description:
+
+'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham,
+Batman must accept one of the greatest psychological and physical tests of his ability to fight
+injustice.',
+imagePath: 'assets/thedarkknight.jpg',
+),
+];
+
+pubspec.yaml:
+
+assets:
+- assets/Movie_icon.jpg
+- assets/inception.jpg
+- assets/TheShawshankRedemption.jpg
+- assets/thedarkknight.jpg
+
+Output:
+
+Result:
+Thus the movie rating application was developed successfully.
+
+Ex No:6
+Date:
+
+Develop an Application to Connect to a Web Service and
+Retrieve Data with HTTP
+
+Aim:
+To develop an application to connect to a web service and retrieve data with HTTP.
+
+Algorithm:
+Step 1: HTTP Request:
+The
+app
+makes
+an
+HTTP
+GET
+request
+to
+the
+URL
+https://jsonplaceholder.typicode.com/posts using the http.get function provided by the http
+package.
+Step 2: Fetching Data:
+Step 2.1: When the app starts, the _data list is empty.
+Step 2.2: The fetchData function is called when the button is pressed.
+Step 2.3: Upon receiving a response from the server, the data is decoded from JSON
+format using json.decode(response.body).
+Step 2.4: If the response status code is 200 (OK), the fetched data is stored in the _data
+list.
+Step 2.5: If there's an error in fetching the data, an exception is thrown.
+Step 3: UI Rendering:
+Step 3.1: The app's UI consists of an AppBar with a title and a Center widget containing
+either a button to fetch data or a ListView.builder displaying the fetched data.
+Step 3.2: If _data is empty, a button labeled "Fetch Data" is displayed. When pressed, it
+triggers the fetchData function.
+Step 3.3: If _data is not empty, a ListView.builder is used to display a list of items, where
+each item corresponds to a post fetched from the API. Each item is represented by a ListTile
+containing the post title and body.
+
+Execution Procedure:
+Step 1: Open VS code and Create a new Flutter project.
+Step 2: Replace the default ‘main.dart’ file with your code.
+Step 3: Add the http dependency to your pubspec.yaml file
+
+Step 4: Run the Flutter application in terminal and choose the device
+“flutter run”
+Step 5: Interact with the App:
+Step 5.1: When the app launches, it will show an "Fetch Data" button.
+Step 5.2: Tap on the button to fetch data from the JSONPlaceholder API.
+Step 5.3: Once the data is fetched, it will display a list of items (titles and bodies) fetched
+from the API.
+
+Program:
+
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+void main() => runApp(MyApp());
+class MyApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Fetching Data Using HTTP',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+),
+home: MyHomePage(),
+);
+}
+}
+class MyHomePage extends StatefulWidget {
+@override
+_MyHomePageState createState() => _MyHomePageState();
+}
+class _MyHomePageState extends State<MyHomePage> {
+List<dynamic> _data = [];
+@override
+void initState() {
+super.initState();
+
+}
+Future<void> fetchData() async {
+final response = await http.get(Uri.parse('https://jsonplaceholder.typicode.com/posts'));
+if (response.statusCode == 200) {
+setState(() {
+_data = json.decode(response.body);
+});
+} else {
+throw Exception('Failed to load data');
+}
+}
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Fetching Data using HTTP'),
+),
+body: Center(
+child: _data.isEmpty
+? ElevatedButton(
+onPressed: fetchData,
+child: Text('Fetch Data'),
+)
+: ListView.builder(
+itemCount: _data.length,
+itemBuilder: (context, index) {
+return ListTile(
+
+title: Text(_data[index]['title']),
+subtitle: Text(_data[index]['body']),
+);
+},
+),
+),
+);
+}
+}
+
+pubspec.yaml:
+dependencies:
+flutter:
+sdk: flutter
+http: ^0.13.3
+
+Output:
+
+Result:
+Thus the application to connect to a web service and retrieve data with HTTP was
+developed successfully.
+
+Ex No:7
+Date:
+
+Develop a Simple Shopping Application
+
+Aim:
+To develop a simple shopping application.
+
+Algorithm:
+Step 1: Product List:
+Step 1.1: The ProductList class is a StatefulWidget that maintains a list of Product objects.
+Step 1.2: Each Product object has a name and an image.
+Step 1.3: The product list UI is displayed using a ListView.builder, where each item is
+represented by a ListTile.
+Step 1.4: Each ListTile displays the product name and image. When the user taps on the
+product, it gets added to the shopping cart.
+Step 2: Shopping Cart:
+Step 2.1: The ShoppingCart class is a stateless widget that displays the items added to the
+cart.
+Step 2.2: It receives a list of product names (cart) as a parameter and displays them using a
+ListView.builder.
+Step 2.3: At the bottom of the shopping cart screen, there's a floating action button (FAB)
+with an icon of a checkmark. When pressed, it triggers a dialog confirming the order placement.
+Step 3: Adding to Cart:
+Step 3.1: When the user taps the "Add to Cart" button on a product in the product list, it
+calls the addToCart function, which adds the product's name to the cart list.
+Step 3.2: This operation triggers a state update, causing the UI to rebuild and reflect the
+changes in the shopping cart.
+Step 4: Order Placement:
+Step 4.1: When the user taps the FAB (checkmark icon) on the shopping cart screen, it
+triggers a dialog confirming the order placement.
+Step 4.2: Upon confirmation, the dialog is dismissed, and the user is navigated back to the
+product list screen.
+
+Execution Procedure:
+Step 1: Open VS code and Create a new Flutter project.
+Step 2: Replace the default ‘main.dart’ file with your code.
+Step 3: Add the required images to the assets folder.
+Step 4: Run the Flutter application in terminal and choose the device
+“flutter run”
+Step 5: Interact with the App:
+Step 6.1: When the app launches, you'll see a list of products with their names and images.
+Step 6.2: Tap the "Add to Cart" button for any product to add it to the shopping cart.
+Step 6.3: Tap the shopping cart icon in the app bar to view the items in the cart.
+Step 6.4: In the shopping cart screen, you can see the items added to the cart.
+Step 6.5: Tap the floating action button with the checkmark icon to place the order.
+Step 6.6: An alert dialog will appear confirming the order placement. Tap "OK" to close
+the dialog and return to the product list screen.
+
+Program:
+
+import 'package:flutter/material.dart';
+void main() {
+runApp(ShoppingApp());
+}
+class ShoppingApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Shopping App',
+theme: ThemeData(
+primarySwatch: Colors.blue,
+),
+home: ProductList(),
+);
+}
+}
+class ProductList extends StatefulWidget {
+@override
+_ProductListState createState() => _ProductListState();
+}
+class _ProductListState extends State<ProductList> {
+List<Product> products = [
+Product(name: "Product 1", image: "assets/product1.jpg"),
+Product(name: "Product 2", image: "assets/product2.jpg"),
+Product(name: "Product 3", image: "assets/product3.jpg"),
+
+];
+List<String> cart = [];
+void addToCart(String product) {
+setState(() {
+cart.add(product);
+});
+}
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Products'),
+actions: <Widget>[
+IconButton(
+icon: Icon(Icons.shopping_cart),
+onPressed: () {
+Navigator.push(
+context,
+MaterialPageRoute(
+builder: (context) => ShoppingCart(cart: cart),
+),
+);
+},
+),
+],
+),
+body: ListView.builder(
+
+itemCount: products.length,
+itemBuilder: (context, index) {
+return ListTile(
+title: Text(products[index].name),
+leading: Image.asset(
+products[index].image,
+width: 50,
+height: 50,
+),
+trailing: ElevatedButton(
+onPressed: () {
+addToCart(products[index].name);
+},
+child: Text('Add to Cart'),
+),
+);
+},
+),
+);
+}
+}
+class ShoppingCart extends StatelessWidget {
+final List<String> cart;
+const ShoppingCart({Key? key, required this.cart}) : super(key: key);
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+
+appBar: AppBar(
+title: Text('Shopping Cart'),
+),
+body: ListView.builder(
+itemCount: cart.length,
+itemBuilder: (context, index) {
+return ListTile(
+title: Text(cart[index]),
+);
+},
+),
+floatingActionButton: FloatingActionButton(
+onPressed: () {
+// Implement checkout process here
+showDialog(
+context: context,
+builder: (BuildContext context) {
+return AlertDialog(
+title: Text("Order Placed"),
+content: Text("Thank you for your order!"),
+actions: [
+TextButton(
+onPressed: () {
+Navigator.of(context).pop();
+Navigator.of(context).pop();
+},
+child: Text("OK"),
+
+),
+],
+);
+},
+);
+},
+child: Icon(Icons.check),
+),
+);
+}
+}
+class Product {
+final String name;
+final String image;
+Product({required this.name, required this.image});
+}
+
+pubspec.yaml:
+
+assets:
+- assets/product1.jpg
+- assets/product2.jpg
+- assets/product3.jpg
+
+Output:
+
+Result:
+Thus the simple shopping application was developed successfully.
+
+Ex No:8
+Date:
+
+Develop an Application Integrating Google Maps
+
+Aim:
+To develop an application integrating google map.
+
+Algorithm:
+Step 1: MyApp:
+This is the root widget of the app. It sets the title and the home screen to MapScreen.
+Step 2: MapScreen:
+Step 2.1: This widget represents the screen that displays the Google Map.
+Step 2.2: It is a StatefulWidget because it needs to update the map when the user's location
+changes.
+Step 2.3: In its state, it stores the GoogleMapController and the _initialLocation, which is
+initially set to (0.0, 0.0).
+Step 2.4: In the initState method, it calls _getLocation to get the user's current location
+asynchronously.
+Step 2.5: The _getLocation method uses the location package to fetch the user's current
+location and updates the _initialLocation.
+Step 2.6: The _goToCurrentLocation method is called when the FAB (Floating Action
+Button) is pressed. It fetches the user's current location again and moves the camera to that
+location on the map.
+Step 2.7: In the build method, it checks if _initialLocation is still the default (0.0, 0.0). If
+so, it displays a CircularProgressIndicator. Otherwise, it displays the Google Map with the user's
+current location marked.
+Step 2.8: The onMapCreated callback sets the GoogleMapController when the map is
+created.
+Step 3: GoogleMap:
+Step 3.1: This widget displays the Google Map.
+Step 3.2: The onMapCreated callback is used to set the GoogleMapController when the
+map is created.
+Step 3.3: The initialCameraPosition is set to _initialLocation with a zoom level of 15.
+
+Step 3.4: myLocationEnabled is set to true to show the user's current location on the map.
+Step 4: FloatingActionButton:
+Step 4.1: This button allows the user to quickly navigate to their current location on the
+map.
+Step 42: When pressed, it calls the _goToCurrentLocation method.
+
+Execution Procedure:
+Step 1: Open VS code and Create a new Flutter project.
+Step 2: Replace the default ‘main.dart’ file with your code.
+Step 3: Add the required dependency to your pubspec.yaml file
+Step 4: Run the Flutter application in terminal and choose the device
+“flutter run”
+Step 5: Interact with the App:
+Step 5.1: When the app launches, it will display a Google Map centered at the user's
+current location.
+Step 5.2: If the current location cannot be determined immediately, a loading indicator will
+be shown until the location is retrieved.
+Step 5.3: You can tap on the floating action button with the location icon to go to the
+current location on the map.
+
+Program:
+
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+void main() {
+runApp(MyApp());
+}
+class MyApp extends StatelessWidget {
+@override
+Widget build(BuildContext context) {
+return MaterialApp(
+title: 'Google Maps with Current Location',
+home: MapScreen(),
+);
+}
+}
+class MapScreen extends StatefulWidget {
+@override
+_MapScreenState createState() => _MapScreenState();
+}
+class _MapScreenState extends State<MapScreen> {
+GoogleMapController? mapController; // Make mapController nullable
+LatLng _initialLocation = LatLng(0.0, 0.0);
+@override
+void initState() {
+super.initState();
+
+_getLocation();
+}
+void _getLocation() async {
+Location location = Location();
+var currentLocation = await location.getLocation();
+setState(() {
+_initialLocation = currentLocation != null
+? LatLng(currentLocation.latitude ?? 0.0, currentLocation.longitude ?? 0.0)
+: LatLng(0.0, 0.0);
+});
+}
+void _goToCurrentLocation() async {
+Location location = Location();
+var currentLocation = await location.getLocation();
+mapController?.animateCamera(
+CameraUpdate.newLatLngZoom(
+LatLng(currentLocation.latitude ?? 0.0, currentLocation.longitude ?? 0.0),
+15.0,
+),
+);
+}
+@override
+Widget build(BuildContext context) {
+return Scaffold(
+appBar: AppBar(
+title: Text('Google Maps with Current Location'),
+),
+
+body: _initialLocation.latitude == 0.0 && _initialLocation.longitude == 0.0
+? Center(
+child: CircularProgressIndicator(),
+)
+: GoogleMap(
+onMapCreated: _onMapCreated,
+initialCameraPosition: CameraPosition(
+target: _initialLocation,
+zoom: 15.0,
+),
+myLocationEnabled: true,
+),
+floatingActionButton: FloatingActionButton(
+onPressed: _goToCurrentLocation,
+tooltip: 'Current Location',
+child: Icon(Icons.location_searching),
+),
+);
+}
+void _onMapCreated(GoogleMapController controller) {
+setState(() {
+mapController = controller;
+});
+}
+}
+
+pubspec.yaml:
+
+dependencies:
+flutter:
+sdk: flutter
+google_maps_flutter: ^2.0.0
+location: ^4.3.0
+
+index.html:
+
+<script
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEgGDI0l9VmnIgrZODvYCES9bW
+LF7HwxQ"></script>
+
+Output:
+
+Result:
+Thus the application integrating Google map was developed successfully.
+
+
